@@ -12,9 +12,13 @@
       "commandName": "Project",
       "commandLineArgs": "25 125 17"
     },
-    "aoc-day11: input": {
+    "aoc-day11: input part 1": {
       "commandName": "Project",
       "commandLineArgs": "25 28 4 3179 96938 0 6617406 490 816207"
+    },
+    "aoc-day11: input part 2": {
+      "commandName": "Project",
+      "commandLineArgs": "75 28 4 3179 96938 0 6617406 490 816207"
     }
   }
 }

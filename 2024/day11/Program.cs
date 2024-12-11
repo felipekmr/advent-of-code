@@ -1,4 +1,28 @@
-﻿bool Split(ulong number, out ulong high, out ulong low)
+﻿
+ulong Add(ulong value1, ulong value2)
+{
+    checked { return value1 + value2; }
+}
+
+ulong Mul(ulong value1, ulong value2)
+{
+    checked { return value1 * value2; }
+}
+
+
+Dictionary<ulong, ulong> CreateStones(IEnumerable<ulong> numbers)
+{
+    var stones = numbers.ToDictionary(n => n, n => 1ul);
+    return stones;
+}
+
+void AddStone(Dictionary<ulong, ulong> stones, ulong number, ulong count)
+{
+    stones.TryGetValue(number, out ulong currentCount);
+    stones[number] = Add(currentCount, count);
+}
+
+bool Split(ulong number, out ulong high, out ulong low)
 {
     high = 0;
     low = 0;
@@ -10,16 +34,13 @@
 
     while (number / divisor1 > 0)
     {
-        checked
-        {
-            divisor1 *= 10;
-        }
+        divisor1 = Mul(divisor1, 10);
 
         countDigits++;
         isEven = !isEven;
 
         if (isEven)
-            divisor2 *= 10;
+            divisor2 = Mul(divisor2, 10);
     }
 
     if (countDigits % 2 > 0)
@@ -33,51 +54,64 @@
     return true;
 }
 
-IEnumerable<ulong> Blink(IEnumerable<ulong> source)
+Dictionary<ulong, ulong> Blink(Dictionary<ulong, ulong> stones)
 {
-    foreach (var item in source)
+    var newStones = new Dictionary<ulong, ulong>();
+
+    foreach (var pair in stones)
     {
-        if (item == 0)
+        var number = pair.Key;
+        var count = pair.Value;
+
+        if (number == 0)
         {
-            yield return 1;
+            AddStone(newStones, 1, count);
         }
 
-        else if (Split(item, out var high, out var low))
+        else if (Split(number, out var high, out var low))
         {
-            yield return high;
-            yield return low;
+            AddStone(newStones, high, count);
+            AddStone(newStones, low, count);
         }
 
-        else if (item >= 1)
+        else if (number >= 1)
         {
-            checked
-            {
-                yield return item * 2024;
-            }
+            var newNumber = Mul(number, 2024);
+            AddStone(newStones, newNumber, count);
         }
     }
+
+    return newStones;
 }
 
-int BlinkMany(int count, IEnumerable<ulong> source)
+ulong BlinkMany(int count, Dictionary<ulong, ulong> stones)
 {
     if (count <= 0)
         return 0;
 
-    var current = source;
+    var current = stones;
 
     for (var i = 0; i < count; i++)
     {
         current = Blink(current);
     }
 
-    return current.Count();
+    var totalStones = 0ul;
+
+    foreach (var stonesCount in current.Values)
+    {
+        totalStones = Add(totalStones, stonesCount);
+    }
+
+    return totalStones;
 }
 
 void InnerMain()
 {
     var blinkCount = int.Parse(args[0]);
-    var intput = args.Skip(1).Select(ulong.Parse);
-    var count = BlinkMany(blinkCount, intput);
+    var numbers = args.Skip(1).Select(ulong.Parse);
+    var stones = CreateStones(numbers);
+    var count = BlinkMany(blinkCount, stones);
 
     Console.WriteLine($"Stones: {count}");
 }
