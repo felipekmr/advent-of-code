@@ -1,0 +1,20 @@
+{
+  "profiles": {
+    "aoc-day11: example 1": {
+      "commandName": "Project",
+      "commandLineArgs": "1 0 1 10 99 999"
+    },
+    "aoc-day11: example 2": {
+      "commandName": "Project",
+      "commandLineArgs": "6 125 17"
+    },
+    "aoc-day11: example 3": {
+      "commandName": "Project",
+      "commandLineArgs": "25 125 17"
+    },
+    "aoc-day11: input": {
+      "commandName": "Project",
+      "commandLineArgs": "25 28 4 3179 96938 0 6617406 490 816207"
+    }
+  }
+}
