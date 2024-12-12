@@ -4,8 +4,8 @@
 
 Expected answer when execute the profile test. The Input profile is the official answer.
 
-| Profile   | Part one answer |
-|-----------|----------------:|
-| Example 1 |   1             |
-| Example 2 |  36             |
-| Input     | 593             |
+| Profile   | Part one | Part two |
+|-----------|---------:|---------:|
+| Example 1 | 1        |  16      |
+| Example 2 | 36       |  81      |
+| Input     | 593      |  1192    |

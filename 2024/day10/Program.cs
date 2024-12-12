@@ -32,7 +32,7 @@ int[][] ReadMap(string inputPath)
     return map;
 }
 
-int ScoreTrailHead(int[][] map, HashSet<int> track, int row, int col, int lastHeight)
+int MeasureTrailHead(int[][] map, Func<int, int, bool> continueOnTrack, int row, int col, int lastHeight)
 {
     if (row < 0 || row >= map.Length)
         return 0;
@@ -45,22 +45,22 @@ int ScoreTrailHead(int[][] map, HashSet<int> track, int row, int col, int lastHe
     if (height != (lastHeight + 1))
         return 0;
 
-    if (AddPosition(track, row, col) == false)
+    if (continueOnTrack(row, col) == false)
         return 0;
 
     if (height == HIGHEST_HEIGHT)
         return 1;
 
     var score = 0;
-    score += ScoreTrailHead(map, track, row - 1, col, height);
-    score += ScoreTrailHead(map, track, row + 1, col, height);
-    score += ScoreTrailHead(map, track, row, col - 1, height);
-    score += ScoreTrailHead(map, track, row, col + 1, height);
+    score += MeasureTrailHead(map, continueOnTrack, row - 1, col, height);
+    score += MeasureTrailHead(map, continueOnTrack, row + 1, col, height);
+    score += MeasureTrailHead(map, continueOnTrack, row, col - 1, height);
+    score += MeasureTrailHead(map, continueOnTrack, row, col + 1, height);
 
     return score;
 }
 
-int ScoreTrailHeads(int[][] map)
+int MeasureTrailHeads(int[][] map, bool useMeasureByScore)
 {
     var totalScore = 0;
 
@@ -77,7 +77,13 @@ int ScoreTrailHeads(int[][] map)
 
             var track = CreateTrailTrack();
 
-            totalScore += ScoreTrailHead(map, track, r, c, -1);
+            // Determines whether should continue in the trail.
+            bool ContinueOnTrack(int row, int col)
+            {
+                return useMeasureByScore == false || AddPosition(track, row, col);
+            }
+
+            totalScore += MeasureTrailHead(map, ContinueOnTrack, r, c, -1);
         }
     }
 
@@ -88,9 +94,12 @@ void InnerMain()
 {
     var inputPath = args[0];
     var map = ReadMap(inputPath);
-    var trailheadsScore = ScoreTrailHeads(map);
 
-    Console.WriteLine($"Trailheads score sum: {trailheadsScore}");
+    var trailheadsScore = MeasureTrailHeads(map, useMeasureByScore: true);
+    var trailheadsRating = MeasureTrailHeads(map, useMeasureByScore: false);
+
+    Console.WriteLine($"Trailheads score sum  : {trailheadsScore}");
+    Console.WriteLine($"Trailheads rating sum : {trailheadsRating}");
 }
 
 InnerMain();
