@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "aoc24-day10: example 1": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../example1-input.txt"
+    },
+    "aoc24-day10: example 2": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../example2-input.txt"
+    },
+    "aoc24-day10: input": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../input.txt"
+    }
+  }
+}
