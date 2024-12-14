@@ -2,11 +2,11 @@
   "profiles": {
     "aoc24-day14: example 1": {
       "commandName": "Project",
-      "commandLineArgs": "100 11 7 ../../../example-1.txt"
+      "commandLineArgs": "11 7 ../../../example-1.txt"
     },
     "aoc24-day14: input": {
       "commandName": "Project",
-      "commandLineArgs": "100 101 103 ../../../../../inputs/2024/input-day14.txt"
+      "commandLineArgs": "101 103 ../../../../../inputs/2024/input-day14.txt"
     }
   }
 }

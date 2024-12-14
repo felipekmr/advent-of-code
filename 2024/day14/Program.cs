@@ -5,6 +5,34 @@ const int VEL_Y_IDX = 3;
 
 int[] CreateRobot() => new int[4];
 
+char[][] CreateMap(int width, int height)
+{
+    var map = new char[height][];
+
+    for (var i = 0; i < height; i++)
+        map[i] = new string(' ', width).ToCharArray();
+
+    return map;
+}
+
+string[] CreateContent(int width, int height, int[][] robots)
+{
+    var map = CreateMap(width, height);
+
+    foreach (var robot in robots)
+    {
+        var x = robot[POS_X_IDX];
+        var y = robot[POS_Y_IDX];
+        map[y][x] = '#';
+    }
+
+    var content = new string[height];
+    for (var i = 0; i < height; i++)
+        content[i] = new string(map[i]);
+
+    return content;
+}
+
 int[] ParseCoord(string input)
 {
     return input.Trim().Split('=')[1].Split(",").Select(int.Parse).ToArray();
@@ -50,12 +78,38 @@ void WalkRobot(int width, int height, int[] robot)
     robot[POS_Y_IDX ] = y;
 }
 
-void Run(int secconds, int width, int height, int[][] robots)
+void RunOne(int width, int height, int[][] robots)
 {
-    for (int i = 0; i < secconds; i++)
-        foreach (var robot in robots)
-            WalkRobot(width, height, robot);
+    foreach (var robot in robots)
+        WalkRobot(width, height, robot);
 }
+
+void Run(int seconds, int width, int height, int[][] robots)
+{
+    for (int i = 0; i < seconds; i++)
+        RunOne(width, height, robots);
+}
+
+int FindChristmasTree(int startSecconds, int width, int height, int[][] robots)
+{
+    var i = startSecconds;
+
+    while (true)
+    {
+        i++;
+        RunOne(width, height, robots);
+
+        var content = CreateContent(width, height, robots);
+        var hasChrirmasTree = content.Any(l => l.Contains("###############################"));
+
+        if (hasChrirmasTree)
+        {
+            SaveFigure($"christma-tree-{i}.txt", content);
+            return i;
+        }
+    }
+}
+
 
 int CalculateSafetyFactor(int width, int height, int[][] robots)
 {
@@ -88,24 +142,32 @@ int CalculateSafetyFactor(int width, int height, int[][] robots)
     return quadrants.Aggregate(1, (a, b) => a * b);
 }
 
-(int Secconds, int Width, int Height, int[][] Robots) ReadArguments()
+void SaveFigure(string outputPath, string[] content)
+{
+    File.WriteAllLines(outputPath, content);
+}
+
+(int Width, int Height, int[][] Robots) ReadArguments()
 {
     var i = 0;
-    var secconds = int.Parse(args[i++]);
     var width = int.Parse(args[i++]);
     var height = int.Parse(args[i++]);
     var robots = ReadRobots(args[i++]);
-    return (secconds, width, height, robots);
+    return (width, height, robots);
 }
 
 void InnerMain()
 {
-    var (secconds, width, height, robots) = ReadArguments();
-    Run(secconds, width, height, robots);
+    var seconds = 100;
+    var (width, height, robots) = ReadArguments();
+
+    Run(seconds, width, height, robots);
 
     var safetyFactor = CalculateSafetyFactor(width, height, robots);
+    var christmasSec = FindChristmasTree(seconds, width, height, robots);
 
-    Console.WriteLine($"Safety factor: {safetyFactor}");
+    Console.WriteLine($"Safety factor {safetyFactor} after {seconds} seconds");
+    Console.WriteLine($"Christmas tree in {christmasSec} seconds");
 }
 
 InnerMain();
