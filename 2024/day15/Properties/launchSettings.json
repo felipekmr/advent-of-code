@@ -2,15 +2,15 @@
   "profiles": {
     "aoc24-day15: example 1.1": {
       "commandName": "Project",
-      "commandLineArgs": "../../../../../inputs/day15/example-1.1.txt"
+      "commandLineArgs": "../../../../../inputs/2024/day15/example-1.1.txt"
     },
     "aoc24-day15: example 1.2": {
       "commandName": "Project",
-      "commandLineArgs": "../../../../../inputs/day15/example-1.2.txt"
+      "commandLineArgs": "../../../../../inputs/2024/day15/example-1.2.txt"
     },
     "aoc24-day15: input": {
       "commandName": "Project",
-      "commandLineArgs": "../../../../../inputs/day15/input.txt"
+      "commandLineArgs": "../../../../../inputs/2024/day15/input.txt"
     }
   }
 }
