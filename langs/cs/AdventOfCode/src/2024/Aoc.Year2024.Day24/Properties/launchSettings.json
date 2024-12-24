@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Aoc.Year2024.Day24: Part1: Example 1": {
+      "commandName": "Project",
+      "commandLineArgs": "1 ../../../../../../../../../inputs/2024/day24/example-1.txt"
+    },
+    "Aoc.Year2024.Day24: Part1: Input": {
+      "commandName": "Project",
+      "commandLineArgs": "1 ../../../../../../../../../inputs/2024/day24/input.txt"
+    }
+  }
+}
