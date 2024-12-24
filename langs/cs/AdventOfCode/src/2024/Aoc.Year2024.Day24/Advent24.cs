@@ -6,6 +6,7 @@ internal static class Advent24
 {
     public static (Wires Wires, Gates Gates) ReadInputFile(string inputFile)
     {
+        var wirer = new WireIdentifier();
         var wires = new Wires();
         var gates = new Gates();
 
@@ -20,17 +21,18 @@ internal static class Advent24
             var split = linetor.Current.Split(": ");
             var wireName = split[0];
             var wireValue = int.Parse(split[1]) > 0;
-            wires.Add(wireName, wireValue);
+            var wire = wirer.GetWire(wireName);
+            wires.Add(wire, wireValue);
         }
 
         while (linetor.MoveNext())
         {
             var split = linetor.Current.Split(' ');
-            var input0 = split[0];
-            var input1 = split[2];
-            var output = split[4];
+            var input0 = wirer.GetWire(split[0]);
+            var input1 = wirer.GetWire(split[2]);
+            var output = wirer.GetWire(split[4]);
             var type = split[1];
-            var gate = new Gate(type, output, [input0, input1]);
+            var gate = new Gate(type, input0, input1, output);
             gates.Add(output, gate);
         }
 
@@ -39,75 +41,36 @@ internal static class Advent24
 
     public static long CalculateOutput(Wires wires, Gates gates)
     {
-        var outputValue = 0L;
+        CalculateWires(wires, gates);
 
-        foreach (var gate in gates.Values)
-            if (TryGetOutputValue(gate, wires, gates, out var gateOutputValue))
-                checked { outputValue += gateOutputValue; }
-
-        return outputValue;
-    }
-
-    public static bool TryGetOutputValue(Gate gate, Wires wires, Gates gates, out long outputValue)
-    {
-        outputValue = 0;
-
-        if (gate.Output.StartsWith('z') == false)
-            return false;
-
-        var wireValue = CalculateWire(gate.Output, wires, gates);
-
-        if (wireValue == false)
-            return false;
-
-        var outputBit = int.Parse(gate.Output.Substring(1));
-        
-        Debug.Assert(outputBit < 64);
-
-        outputValue = 1L << outputBit;
-        return true;
+        return GetNumber('z', wires);
     }
 
     public static void CalculateWires(Wires wires, Gates gates)
     {
-        foreach (var gate in gates.Values)
-            if (TryCalculateWire(gate, wires, gates, out var wireValue))
-                wires.Add(gate.Output, wireValue);
+        new CircuitResolver(wires, gates).Execute(); ;
     }
 
-    public static bool TryCalculateWire(Gate gate, Wires wires, Gates gates, out bool outputValue)
+    public static long GetNumber(char wireType, Wires wires)
     {
-        var wireName = gate.Output;
+        var number = 0L;
+        var firstId = WireIdentifier.GetFirstId(wireType);
 
-        if (wires.TryGetValue(wireName, out outputValue))
-            return true;
-
-        return CalculateWire(gate, wires, gates);
-    }
-
-    public static bool CalculateWire(Gate gate, Wires wires, Gates gates)
-    {
-        var input0 = CalculateWire(gate.Inputs[0], wires, gates);
-        var input1 = CalculateWire(gate.Inputs[1], wires, gates);
-
-        var gateType = gate.Type;
-        var wireValue = gateType switch
+        foreach (var pair in wires)
         {
-            "AND" => input0 && input1,
-            "OR" => input0 || input1,
-            "XOR" => input0 ^ input1,
-            _ => throw new InvalidOperationException($"Invalid gate type '{gateType}'"),
-        };
+            var wire = pair.Key;
+            var wireValue = pair.Value;
 
-        return wireValue;
-    }
+            if (wireValue == false)
+                continue;
 
-    public static bool CalculateWire(string wireName, Wires wires, Gates gates)
-    {
-        if (wires.TryGetValue(wireName, out var wireValue))
-            return wireValue;
+             if (WireIdentifier.FilterWire(wire, firstId) == false)
+                continue;
 
-        var gate = gates[wireName];
-        return CalculateWire(gate, wires, gates);
+            var wireBit = wire.Id - firstId;
+            number += 1L << wireBit;
+        }
+
+        return number;
     }
 }
